@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ namespace Swashbuckle.AspNetCore.Filters
     {
         private readonly IJsonFormatter jsonFormatter;
         private readonly MvcOutputFormatter mvcOutputFormatter;
+        private static readonly MediaTypeHeaderValue ApplicationJson = MediaTypeHeaderValue.Parse("application/json; charset=utf-8");
 
         public ExamplesConverter(IJsonFormatter jsonFormatter, MvcOutputFormatter mvcOutputFormatter)
         {
@@ -26,7 +28,7 @@ namespace Swashbuckle.AspNetCore.Filters
 
         public IOpenApiAny SerializeExampleJson(object exampleValue)
         {
-            return new OpenApiRawString(jsonFormatter.FormatJson(exampleValue));
+            return new OpenApiRawString(mvcOutputFormatter.Serialize(exampleValue, ApplicationJson));
         }
 
         private static IDictionary<string, OpenApiExample> ToOpenApiExamplesDictionary(
